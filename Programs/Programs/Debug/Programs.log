@@ -1,0 +1,6 @@
+﻿  Source.cpp
+c:\tupa_uchoba\5_semestr\mikpo\mikpo4\mikpo4\programs\programs\source.cpp(10): warning C4244: =: преобразование "double" в "float", возможна потеря данных
+c:\tupa_uchoba\5_semestr\mikpo\mikpo4\mikpo4\programs\programs\source.cpp(13): warning C4244: =: преобразование "float" в "int", возможна потеря данных
+c:\tupa_uchoba\5_semestr\mikpo\mikpo4\mikpo4\programs\programs\source.cpp(14): warning C4244: =: преобразование "int" в "float", возможна потеря данных
+c:\tupa_uchoba\5_semestr\mikpo\mikpo4\mikpo4\programs\programs\source.cpp(17): warning C4244: =: преобразование "float" в "int", возможна потеря данных
+  Programs.vcxproj -> C:\tupa_uchoba\5_semestr\MiKPO\MiKPO4\MIKPO4\Programs\Debug\Program.exe
