@@ -7,22 +7,28 @@
 #include <map>
 using namespace std;
 
+//строки анализируемой программы
 deque<string> expLines;
+//операнды
 map<string, int> expOperands;
+//операторы
 map<string, int> expOperators;
 
-bool isNativeDataType(string word)
-{
-	return word == "int" || word == "char" || word == "double" || word == "float";
-}
-
+//инициализация массивов
 void init()
-{
+{	
 	expLines = deque<string>();
 	expOperands = map<string, int>();
 	expOperators = map<string, int>();
 }
 
+//тип переменной
+bool isNativeDataType(string word)
+{
+	return word == "int" || word == "char" || word == "double" || word == "float";
+}
+
+//форматируем строку
 string formateExpLine(string expLine)
 {
 	// Удаление пробелов с начала и с конца. 
@@ -86,9 +92,10 @@ string formateExpLine(string expLine)
 	return expLine;
 }
 
+//получем код анализируемой программы
 void readInput()
 {
-	ifstream expInput("expression.txt");
+	ifstream expInput("Sourse.txt");
 
 	if (!expInput.is_open())
 	{
@@ -114,6 +121,7 @@ void readInput()
 	expInput.close();
 }
 
+//разбиваем строку на слова
 vector<string> splitExpLine(string expLine)
 {
 	vector<string> expWords(0);
@@ -136,6 +144,7 @@ vector<string> splitExpLine(string expLine)
 	return expWords;
 }
 
+//простой оператор
 bool isSimpleOperator(string expOperator)
 {
 	return expOperator == "=" || expOperator == "+" ||
@@ -143,6 +152,7 @@ bool isSimpleOperator(string expOperator)
 		expOperator == "/" || expOperator == "%";
 }
 
+//сложный оператор
 bool isComplexOperator(string expOperator)
 {
 	if (expOperator == "sin(temp)")
@@ -150,7 +160,7 @@ bool isComplexOperator(string expOperator)
 		expOperands.at("temp")++;
 		return true;
 	}
-	else if (expOperator == "pov(temp, 3)")
+	else if (expOperator == "pow(temp,3)")
 	{
 		expOperands.at("temp")++;
 		return true;
@@ -163,6 +173,7 @@ bool isComplexOperator(string expOperator)
 	return false;
 }
 
+//разбиваем строку на операторы и операнды
 void analyzeExp(const vector<string> &expWords)
 {
 	for (const string expWord : expWords)
@@ -177,12 +188,7 @@ void analyzeExp(const vector<string> &expWords)
 		}
 		else if (isComplexOperator(expWord))
 		{
-			string complexOperator = expWord.substr(0, expWord.length() - 3);
-			////////////////////////////////////////////////////////////////
-			//
-			//ашибка (предполагаю что программа обращается к несуществующему элементу)
-			//
-			////////////////////////////////////////////////////////////////
+			string complexOperator = expWord.substr(0, 3);
 
 			if (expOperators.find(complexOperator) == expOperators.end())
 			{
@@ -201,12 +207,15 @@ void analyzeExp(const vector<string> &expWords)
 	}
 }
 
+//анализируем программу
 void analуze()
 {
 	for (string expLine : expLines)
 	{
+		//строка разбитая на слова
 		vector<string> expWords = splitExpLine(expLine);
 
+		//начало программы, ничего не делаем
 		if (expWords.size() == 2 && expWords[0] == "int" && expWords[1] == "main()")
 		{
 			continue;
@@ -215,14 +224,20 @@ void analуze()
 		{
 			continue;
 		}
-		else if (expWords.size() == 2 && expWords[0] == "int")
+
+		//добавляем в массив операндов объявленные переменные
+		else if (expWords.size() == 2 && isNativeDataType(expWords[0]))
 		{
 			expOperands.insert(make_pair(expWords[1], 0));
 		}
+
+		//анализируем строки
 		else if (expWords.size() > 2 && expWords[1] == "=")
 		{
 			analyzeExp(expWords);
 		}
+
+		//если это вывод или конец программы ничего не делаем
 		else if (expWords[0] == "cout")
 		{
 			continue;
@@ -234,6 +249,7 @@ void analуze()
 	}
 }
 
+//Метрики
 int uniqueOperands;
 int totalOperands;
 int uniqueOperators;
@@ -242,6 +258,7 @@ int progVocabulary;
 int implementLength;
 double programValue;
 
+//вычисляем метрики
 void countMetrics()
 {
 	uniqueOperands = expOperands.size();
@@ -266,49 +283,49 @@ void countMetrics()
 	programValue = implementLength * log2(progVocabulary);
 }
 
-
+//вывод результатов
 void writeOutput()
 {
 	setlocale(LC_ALL, "Russian");
 
-	cout << "===========================" << endl;
-	cout << "| " << "Информация об операндах" << " |";
-	cout << "---------------------------" << endl;
-	cout << "|";
+	cout << "============================" << endl;
+	cout << "|  " << "Информация об операндах" << " |" << endl;
+	cout << "----------------------------" << endl;
+	cout << "| ";
 	cout << setw(4) << "Имя";
 	cout << setw(15) << "Количество";
 	cout << setw(7) << "|" << endl;
 	for (pair<string, int> operand : expOperands)
 	{
 		cout << "|";
-		cout << setw(4) << operand.first;
+		cout << setw(5) << operand.first;
 		cout << setw(15) << operand.second;
 		cout << setw(7) << "|" << endl;
 	}
-	cout << "===========================" << endl;
-
-
-
 	cout << "============================" << endl;
-	cout << "| " << "Информация об операторах" << " |";
-	cout << "----------------------------" << endl;
+
+
+
+	cout << "==========================" << endl;
+	cout << "|" << "Информация об операторах" << "|" << endl;
+	cout << "--------------------------" << endl;
 	cout << "|";
-	cout << setw(6) << "Имя";
+	cout << setw(4) << "Имя";
 	cout << setw(15) << "Количество";
 	cout << setw(6) << "|" << endl;
 	for (pair<string, int> expOperator : expOperators)
 	{
 		cout << "|";
-		cout << setw(6) << expOperator.first;
+		cout << setw(4) << expOperator.first;
 		cout << setw(15) << expOperator.second;
 		cout << setw(6) << "|" << endl;
 	}
-	cout << "============================" << endl;
+	cout << "==========================" << endl;
 	cout << endl;
 
-	cout << "=======================================";
-	cout << "| " << "Информация о метриках";
-	cout << "---------------------------------------";
+	cout << "=======================================" << endl;
+	cout << "|        " << "Информация о метриках" << "        |" << endl;
+	cout << "---------------------------------------" << endl;
 	cout << "| " << "Количество уникальных операндов: " << uniqueOperands << "  |" << endl;
 	cout << "| " << "Количество уникальных операторов: " <<
 		uniqueOperators << " |" << endl;
@@ -321,7 +338,7 @@ void writeOutput()
 	cout << "| " << "Длина реализации: " <<
 		implementLength << "                |" << endl;
 	cout << "| " << "Объем программы: " <<
-		programValue << "            |" << endl;
+		programValue << "                |" << endl;
 	cout << "=======================================";
 	cout << endl;
 
@@ -337,5 +354,6 @@ int main()
 	countMetrics();
 	writeOutput();
 
+	system("pause");
 	return 0;
 }
